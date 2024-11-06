@@ -33,9 +33,7 @@ public class Unit : MonoBehaviour
             yield return null;
         }
 
-        //_base.ReceiveResource();
         _picker.Release();
-        print(1);
         _isBusy = false; 
     }
 }

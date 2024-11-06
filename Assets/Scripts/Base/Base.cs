@@ -29,13 +29,13 @@ public class Base : MonoBehaviour
         {
             resource.Destroy();
             ReceiveResource();
+            _resourcesDatabase.RemoveReservation(resource);
         }
     }
 
     private void ReceiveResource()
     {
         _resourceCount++;
-        Debug.Log($"Количество ресурсов на базе: {_resourceCount}");
     }
 
     private IEnumerator MineResources()
@@ -52,18 +52,18 @@ public class Base : MonoBehaviour
     {
         List<Unit> freeUnits = _units.Where(unit => unit.IsBusy == false).ToList();
 
-        List<Resource> resources = _scanner.Scan().Where(resource => resource.IsBusy == false).ToList();
+        List<Resource> freeResources = _resourcesDatabase.GetFreeCrystals(_scanner.Scan()).ToList();
 
-        if (freeUnits.Count > 0 && resources.Count > 0)
+        if (freeUnits.Count > 0 && freeResources.Count > 0)
         {
             foreach (Unit unit in freeUnits)
             {
-                Resource resource = resources[0]; 
-                resource.MarkBusy(); 
-                unit.SendToResource(resources[0]);
-                resources.RemoveAt(0); 
+                Resource resource = freeResources[0];
+                _resourcesDatabase.ReserveCrystal(resource);
+                unit.SendToResource(resource);
+                freeResources.RemoveAt(0); 
                 
-                if (resources.Count == 0)
+                if (freeResources.Count == 0)
                     break; 
             }
         }
