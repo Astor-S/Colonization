@@ -6,7 +6,7 @@ public class Picker : MonoBehaviour
     
     private Resource _heldResource;
 
-    public float PickUpDistance { get; private set; }
+    public float PickUpDistance => _pickUpDistance;
 
     public void PickUp(Resource resource)
     {
