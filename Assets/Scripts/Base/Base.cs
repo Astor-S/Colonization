@@ -52,14 +52,14 @@ public class Base : MonoBehaviour
     {
         List<Unit> freeUnits = _units.Where(unit => unit.IsBusy == false).ToList();
 
-        List<Resource> freeResources = _resourcesDatabase.GetFreeCrystals(_scanner.Scan()).ToList();
+        List<Resource> freeResources = _resourcesDatabase.GetFreeResources(_scanner.Scan()).ToList();
 
         if (freeUnits.Count > 0 && freeResources.Count > 0)
         {
             foreach (Unit unit in freeUnits)
             {
                 Resource resource = freeResources[0];
-                _resourcesDatabase.ReserveCrystal(resource);
+                _resourcesDatabase.ReserveResources(resource);
                 unit.SendToResource(resource);
                 freeResources.RemoveAt(0); 
                 

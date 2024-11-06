@@ -5,10 +5,10 @@ public class ResourcesDatabase
 {
     private readonly HashSet<Resource> _resources = new();
 
-    public void ReserveCrystal(Resource resource) =>
+    public void ReserveResources(Resource resource) =>
         _resources.Add(resource);
 
-    public IEnumerable<Resource> GetFreeCrystals(IEnumerable<Resource> resources) =>
+    public IEnumerable<Resource> GetFreeResources(IEnumerable<Resource> resources) =>
         resources.Where(resource => _resources.Contains(resource) == false);
 
     public void RemoveReservation(Resource resource) =>
