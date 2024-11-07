@@ -20,18 +20,14 @@ public class Unit : MonoBehaviour
 
     private IEnumerator CollectResource(Resource resource)
     {
-        while ((transform.position - resource.transform.position).sqrMagnitude > _picker.PickUpDistance)
-        {
-            yield return null;
-        }
+        yield return new WaitUntil(() =>
+            (transform.position - resource.transform.position).sqrMagnitude <= _picker.PickUpDistance);
 
         _picker.PickUp(resource);
         _mover.MoveTo(_base.transform);
 
-        while ((transform.position - _base.transform.position).sqrMagnitude > _picker.PickUpDistance)
-        {
-            yield return null;
-        }
+        yield return new WaitUntil(() =>
+            (transform.position - _base.transform.position).sqrMagnitude <= _picker.PickUpDistance);
 
         _picker.Release();
         _isBusy = false; 
