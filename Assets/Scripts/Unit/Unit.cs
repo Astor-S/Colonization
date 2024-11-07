@@ -20,7 +20,7 @@ public class Unit : MonoBehaviour
 
     private IEnumerator CollectResource(Resource resource)
     {
-        while (Vector3.Distance(transform.position, resource.transform.position) > _picker.PickUpDistance)
+        while ((transform.position - resource.transform.position).sqrMagnitude > _picker.PickUpDistance)
         {
             yield return null;
         }
@@ -28,7 +28,7 @@ public class Unit : MonoBehaviour
         _picker.PickUp(resource);
         _mover.MoveTo(_base.transform);
 
-        while (Vector3.Distance(transform.position, _base.transform.position) > _picker.PickUpDistance)
+        while ((transform.position - _base.transform.position).sqrMagnitude > _picker.PickUpDistance)
         {
             yield return null;
         }
