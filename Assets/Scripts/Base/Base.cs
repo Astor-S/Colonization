@@ -1,17 +1,29 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Base : MonoBehaviour
+public class Base : MonoBehaviour, IDestroyable<Base>
 {
     [SerializeField] private Scanner _scanner;
     [SerializeField] private List<Unit> _units;
+    [SerializeField] private SpawnerUnits _spawnerUnits;
     [SerializeField] private float _scanDelayTime = 1f;
+    [SerializeField] private int _minCountUnits = 1;
 
     private ResourcesDatabase _resourcesDatabase = new();
     private WaitForSeconds _scanDelay;
+    
     private int _resourceCount;
+    private int _amountResourcesForUnitCreate = 3;
+    private int _amountResourcesForBaseCreate = 5;
+
+    private bool _IsCreateUnit = true;
+
+    public event Action<Base> Destroyed;
+
+    public Flag Flag { get; private set; }
 
     private void Awake()
     {
@@ -33,9 +45,27 @@ public class Base : MonoBehaviour
         }
     }
 
+    public void PlaceFlag(Flag flag)
+    {
+        Flag = flag;
+        flag.transform.SetParent(transform);
+
+        _IsCreateUnit = false;
+    }
+
+    public void MoveFlag(Flag newFlag)
+    {
+        if (Flag != null)
+            Flag.Destroy();
+
+        Flag = newFlag;
+        newFlag.transform.SetParent(transform);
+    }
+
     private void ReceiveResource()
     {
         _resourceCount++;
+        Create();
     }
 
     private IEnumerator MineResources()
@@ -65,6 +95,42 @@ public class Base : MonoBehaviour
                 
                 if (freeResources.Count == 0)
                     break; 
+            }
+        }
+    }
+
+    private void Create()
+    {
+        if (_IsCreateUnit == true)
+            CreateUnit();
+        else 
+            CreateBase();  
+    }
+
+    private void CreateUnit()
+    {
+        if (_IsCreateUnit == true && _resourceCount >= _amountResourcesForUnitCreate)
+        {
+            Unit newUnit = _spawnerUnits.Spawn(transform.position);
+            _units.Add(newUnit);
+            _resourceCount -= _amountResourcesForUnitCreate;
+        }
+    }
+
+    private void CreateBase()
+    {
+        if(_units.Count > _minCountUnits && _IsCreateUnit == false && _resourceCount>= _amountResourcesForBaseCreate)
+        {
+            Unit freeUnit = _units.FirstOrDefault(unit => unit.IsBusy == false);
+            
+            if(freeUnit != null)
+            {
+                //freeUnit.SendToFlag(Flag);
+                //Base newBase = _spawnerBases.Spawn(Flag.transform.position);
+                //freeUnit.ChangeOwner(newBase);
+                _units.Remove(freeUnit);
+                _resourceCount -= _amountResourcesForBaseCreate;
+                print(1);
             }
         }
     }

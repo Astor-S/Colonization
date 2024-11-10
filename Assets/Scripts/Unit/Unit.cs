@@ -1,7 +1,8 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
-public class Unit : MonoBehaviour
+public class Unit : MonoBehaviour, IDestroyable<Unit>
 {
     [SerializeField] private Mover _mover;
     [SerializeField] private Picker _picker;
@@ -11,11 +12,18 @@ public class Unit : MonoBehaviour
 
     public bool IsBusy => _isBusy;
 
+    public event Action<Unit> Destroyed;
+
     public void SendToResource(Resource resource)
     {
         _isBusy = true;
         _mover.MoveTo(resource.transform);
         StartCoroutine(CollectResource(resource));
+    }
+
+    public void Init(Base @base)
+    {
+        _base = @base;
     }
 
     private IEnumerator CollectResource(Resource resource)

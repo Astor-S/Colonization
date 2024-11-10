@@ -23,7 +23,7 @@ public class Picker : MonoBehaviour
     {
         if (_heldResource != null)
         {
-            _heldResource.transform.SetParent(null); 
+            _heldResource.transform.parent = null; 
             _heldResource = null; 
         }
     }

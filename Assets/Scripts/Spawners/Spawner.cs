@@ -14,15 +14,18 @@ public class Spawner<T> : MonoBehaviour where T : MonoBehaviour, IDestroyable<T>
             () => Instantiate(_objectPrefab));
     }
 
-    public virtual T Spawn(Vector2 position)
+    public  T Spawn(Vector3 position)
     {
         T @object = _pool.GetObject();
+        OnSpawn(@object);
         @object.transform.position = position;
         @object.Destroyed += OnObjectDestroyed;
         @object.gameObject.SetActive(true);
 
         return @object;
     }
+
+    protected virtual void OnSpawn(T obj) {}
 
     protected virtual void OnObjectDestroyed(T obj)
     {
