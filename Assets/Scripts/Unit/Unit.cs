@@ -26,6 +26,27 @@ public class Unit : MonoBehaviour, IDestroyable<Unit>
         _base = @base;
     }
 
+    public void SendToFlag(Flag flag)
+    {
+        _isBusy = true;
+        _mover.MoveTo(flag.transform);
+
+        StartCoroutine(MoveToFlag(flag));
+    }
+
+    public void ChangeOwner(Base newBase)
+    {
+        _base = newBase;
+    }
+
+    private IEnumerator MoveToFlag(Flag flag)
+    {
+        yield return new WaitUntil(() =>
+            (transform.position - flag.transform.position).sqrMagnitude <= _picker.PickUpDistance);
+
+        _isBusy = false;
+    }
+
     private IEnumerator CollectResource(Resource resource)
     {
         yield return new WaitUntil(() =>

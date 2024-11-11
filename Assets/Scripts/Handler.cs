@@ -15,19 +15,27 @@ public class Handler : MonoBehaviour
             HandleMouseClick();
     }
 
-    private void AddListeners()
+    private void OnEnable()
     {
-
+        if (_selectedBase != null)
+            _selectedBase.RequestedCreationBase += CreateBase;   
     }
 
-    private void RemoveListeners()
+    private void CreateBase(Base baseToCreate)
     {
+        if (_selectedBase != null && _selectedBase.Flag != null)
+        {
+            Unit freeUnit = _selectedBase.GetFreeUnit(); 
 
-    }
-
-    private void SpawnBase()
-    {
-
+            if (freeUnit != null)
+            {
+                freeUnit.SendToFlag(_selectedBase.Flag);
+                Base newBase = _spawnerBases.Spawn(_selectedBase.Flag.transform.position);
+                freeUnit.ChangeOwner(newBase);
+                _selectedBase.RemoveUnit(freeUnit);
+                _selectedBase.SpendResourcesCreatingBase();
+            }
+        }
     }
 
     private void HandleMouseClick()

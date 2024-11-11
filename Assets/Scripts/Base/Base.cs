@@ -21,6 +21,7 @@ public class Base : MonoBehaviour, IDestroyable<Base>
 
     private bool _IsCreateUnit = true;
 
+    public event Action<Base> RequestedCreationBase;
     public event Action<Base> Destroyed;
 
     public Flag Flag { get; private set; }
@@ -60,6 +61,29 @@ public class Base : MonoBehaviour, IDestroyable<Base>
 
         Flag = newFlag;
         newFlag.transform.SetParent(transform);
+    }
+
+    public Unit GetFreeUnit()
+    {
+        foreach (Unit unit in _units)
+        {
+            if (unit.IsBusy == false)
+            {
+                return unit;
+            }
+        }
+
+        return null;
+    }
+
+    public void RemoveUnit(Unit unitToRemove)
+    {
+        _units.Remove(unitToRemove);
+    }
+
+    public void SpendResourcesCreatingBase()
+    {
+        _resourceCount -= _amountResourcesForBaseCreate;
     }
 
     private void ReceiveResource()
@@ -104,7 +128,7 @@ public class Base : MonoBehaviour, IDestroyable<Base>
         if (_IsCreateUnit == true)
             CreateUnit();
         else 
-            CreateBase();  
+            RequestCreateBase();  
     }
 
     private void CreateUnit()
@@ -117,21 +141,27 @@ public class Base : MonoBehaviour, IDestroyable<Base>
         }
     }
 
-    private void CreateBase()
+    private void RequestCreateBase()
     {
-        if(_units.Count > _minCountUnits && _IsCreateUnit == false && _resourceCount>= _amountResourcesForBaseCreate)
-        {
-            Unit freeUnit = _units.FirstOrDefault(unit => unit.IsBusy == false);
-            
-            if(freeUnit != null)
-            {
-                //freeUnit.SendToFlag(Flag);
-                //Base newBase = _spawnerBases.Spawn(Flag.transform.position);
-                //freeUnit.ChangeOwner(newBase);
-                _units.Remove(freeUnit);
-                _resourceCount -= _amountResourcesForBaseCreate;
-                print(1);
-            }
-        }
+        if (_units.Count > _minCountUnits && _IsCreateUnit == false && _resourceCount >= _amountResourcesForBaseCreate)
+            RequestedCreationBase?.Invoke(this);      
     }
+
+    //private void CreateBase()
+    //{
+    //    if(_units.Count > _minCountUnits && _IsCreateUnit == false && _resourceCount>= _amountResourcesForBaseCreate)
+    //    {
+    //        Unit freeUnit = _units.FirstOrDefault(unit => unit.IsBusy == false);
+
+    //        if(freeUnit != null)
+    //        {
+    //            //freeUnit.SendToFlag(Flag);
+    //            //Base newBase = _spawnerBases.Spawn(Flag.transform.position);
+    //            //freeUnit.ChangeOwner(newBase);
+    //            _units.Remove(freeUnit);
+    //            _resourceCount -= _amountResourcesForBaseCreate;
+    //            print(1);
+    //        }
+    //    }
+    //}
 }
