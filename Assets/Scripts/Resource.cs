@@ -7,6 +7,7 @@ public class Resource : MonoBehaviour, IDestroyable<Resource>
 
     public void Destroy()
     {
+        transform.parent = null;
         Destroyed?.Invoke(this);
     }
 }
