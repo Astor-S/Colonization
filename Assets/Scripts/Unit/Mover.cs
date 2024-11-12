@@ -23,7 +23,7 @@ public class Mover : MonoBehaviour
         while (_targetTransform != null)
         {
             transform.position = Vector3.MoveTowards(
-                transform.position, _targetTransform.position, _speed * Time.deltaTime);
+                 transform.position, _targetTransform.position, _speed * Time.deltaTime);
 
             yield return null;
         }

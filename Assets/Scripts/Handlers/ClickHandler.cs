@@ -1,9 +1,7 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-public class Handler : MonoBehaviour
+public class ClickHandler : MonoBehaviour
 {
-    [SerializeField] private SpawnerBases _spawnerBases;
     [SerializeField] private SpawnerFlags _spawnerFlags;
 
     private Base _selectedBase;
@@ -15,46 +13,15 @@ public class Handler : MonoBehaviour
             HandleMouseClick();
     }
 
-    private void OnEnable()
-    {
-        if (_selectedBase != null)
-            _selectedBase.RequestedCreationBase += CreateBase;   
-    }
-
-    private void CreateBase(Base baseToCreate)
-    {
-        if (_selectedBase != null && _selectedBase.Flag != null)
-        {
-            Unit freeUnit = _selectedBase.GetFreeUnit(); 
-
-            if (freeUnit != null)
-            {
-                freeUnit.SendToFlag(_selectedBase.Flag);
-                Base newBase = _spawnerBases.Spawn(_selectedBase.Flag.transform.position);
-                freeUnit.ChangeOwner(newBase);
-                _selectedBase.RemoveUnit(freeUnit);
-                _selectedBase.SpendResourcesCreatingBase();
-            }
-        }
-    }
-
     private void HandleMouseClick()
     {
-        if (EventSystem.current.IsPointerOverGameObject())
-            return;
-
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit))
         {
             if (hit.collider.TryGetComponent(out Base baseObject))
-                SelectBase(baseObject);
+                _selectedBase = baseObject;
             else if (_selectedBase != null && hit.collider.TryGetComponent(out Ground _))
-                PlaceFlag(hit.point);       
+                PlaceFlag(hit.point);
         }
-    }
-
-    private void SelectBase(Base baseObject)
-    {
-        _selectedBase = baseObject;
     }
 
     private void PlaceFlag(Vector3 position)

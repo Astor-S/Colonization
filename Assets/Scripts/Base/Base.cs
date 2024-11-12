@@ -86,6 +86,11 @@ public class Base : MonoBehaviour, IDestroyable<Base>
         _resourceCount -= _amountResourcesForBaseCreate;
     }
 
+    public void ActivateBasicBehavior()
+    {
+        _IsCreateUnit = true;
+    }
+
     private void ReceiveResource()
     {
         _resourceCount++;
@@ -143,25 +148,7 @@ public class Base : MonoBehaviour, IDestroyable<Base>
 
     private void RequestCreateBase()
     {
-        if (_units.Count > _minCountUnits && _IsCreateUnit == false && _resourceCount >= _amountResourcesForBaseCreate)
-            RequestedCreationBase?.Invoke(this);      
+        if (_units.Count > _minCountUnits && _IsCreateUnit == false && _resourceCount >= _amountResourcesForBaseCreate)     
+            RequestedCreationBase?.Invoke(this);              
     }
-
-    //private void CreateBase()
-    //{
-    //    if(_units.Count > _minCountUnits && _IsCreateUnit == false && _resourceCount>= _amountResourcesForBaseCreate)
-    //    {
-    //        Unit freeUnit = _units.FirstOrDefault(unit => unit.IsBusy == false);
-
-    //        if(freeUnit != null)
-    //        {
-    //            //freeUnit.SendToFlag(Flag);
-    //            //Base newBase = _spawnerBases.Spawn(Flag.transform.position);
-    //            //freeUnit.ChangeOwner(newBase);
-    //            _units.Remove(freeUnit);
-    //            _resourceCount -= _amountResourcesForBaseCreate;
-    //            print(1);
-    //        }
-    //    }
-    //}
 }

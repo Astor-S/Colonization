@@ -3,7 +3,8 @@ using UnityEngine;
 public class Picker : MonoBehaviour
 {
     [SerializeField] private float _pickUpDistance = 0.1f;
-    
+    [SerializeField] private float _pickUpHeight = 2f;
+
     private Resource _heldResource;
 
     public float PickUpDistance => _pickUpDistance;
@@ -16,7 +17,7 @@ public class Picker : MonoBehaviour
         _heldResource = resource;
 
         resource.transform.SetParent(transform);
-        resource.transform.localPosition = Vector3.up; 
+        resource.transform.localPosition = Vector3.up * _pickUpHeight; 
     }
 
     public void Release()
