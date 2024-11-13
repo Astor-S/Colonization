@@ -48,18 +48,18 @@ public class SpawnBasesHandler : MonoBehaviour
             freeUnit = baseToCreate.GetFreeUnit();
         }
 
-            freeUnit.SendToFlag(baseToCreate.Flag, () =>
-            {
-                Base newBase = _spawnerBases.Spawn(baseToCreate.Flag.transform.position);
-                _bases.Add(newBase);
-                newBase.RequestedCreationBase += CreateBase;
-                freeUnit.ChangeOwner(newBase);
-                newBase.AddUnit(freeUnit);
-                newBase.Initialize(_resourcesDatabase);
-                baseToCreate.RemoveUnit(freeUnit);
-                baseToCreate.SpendResourcesCreatingBase();
-                baseToCreate.Flag.gameObject.SetActive(false);
-                baseToCreate.ActivateBasicBehavior();
-            });
+        freeUnit.SendToFlag(baseToCreate.Flag, () =>
+        {
+            Base newBase = _spawnerBases.Spawn(baseToCreate.Flag.transform.position);
+            _bases.Add(newBase);
+            newBase.RequestedCreationBase += CreateBase;
+            freeUnit.ChangeOwner(newBase);
+            newBase.AddUnit(freeUnit);
+            newBase.Initialize(_resourcesDatabase);
+            baseToCreate.RemoveUnit(freeUnit);
+            baseToCreate.SpendResourcesCreatingBase();
+            baseToCreate.Flag.gameObject.SetActive(false);
+            baseToCreate.ActivateBasicBehavior();
+        });
     }
 }
