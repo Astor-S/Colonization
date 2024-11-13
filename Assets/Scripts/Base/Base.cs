@@ -54,30 +54,8 @@ public class Base : MonoBehaviour, IDestroyable<Base>
         _resourcesDatabase = resourcesDatabase;
     }
 
-    public void PlaceFlag(Flag flag)
-    {
-        if (EnoughUnitsToCreateBase)
-        {
-            _flag = flag;
-            flag.transform.SetParent(transform);
-
-            _isCreateUnit = false;
-        }
-    }
-
-    public void PrepareCreateBase()
-    {
-            _isCreateUnit = false; 
-    }
-
-    public void MoveFlag(Flag newFlag)
-    {
-        if (Flag != null)
-            Flag.Destroy();
-
-        _flag = newFlag;
-        newFlag.transform.SetParent(transform);
-    }
+    public void PrepareCreateBase() => 
+        _isCreateUnit = false;
 
     public Unit GetFreeUnit()
     {
