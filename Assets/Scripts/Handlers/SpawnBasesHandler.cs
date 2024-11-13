@@ -6,6 +6,14 @@ public class SpawnBasesHandler : MonoBehaviour
     [SerializeField] private SpawnerBases _spawnerBases;
     [SerializeField] private List<Base>  _bases;
 
+    private ResourcesDatabase _resourcesDatabase = new();
+
+    private void Start()
+    {
+        foreach(Base @base in _bases)
+            @base.Initialize(_resourcesDatabase);   
+    }
+
     private void OnEnable()
     {         
         foreach (Base @base in _bases)
@@ -32,6 +40,8 @@ public class SpawnBasesHandler : MonoBehaviour
                     _bases.Add(newBase);
                     newBase.RequestedCreationBase += CreateBase;
                     freeUnit.ChangeOwner(newBase);
+                    newBase.AddUnit(freeUnit);
+                    newBase.Initialize(_resourcesDatabase);
                     baseToCreate.RemoveUnit(freeUnit);
                     baseToCreate.SpendResourcesCreatingBase();
                     baseToCreate.Flag.Destroy();

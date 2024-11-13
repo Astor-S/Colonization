@@ -1,6 +1,1 @@
-using UnityEngine;
-
-public class SpawnerBases : Spawner<Base>
-{
-   
-}
+public class SpawnerBases : Spawner<Base> {}

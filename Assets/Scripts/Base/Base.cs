@@ -12,7 +12,7 @@ public class Base : MonoBehaviour, IDestroyable<Base>
     [SerializeField] private float _scanDelayTime = 1f;
     [SerializeField] private int _minCountUnitsForCreateBase = 1;
 
-    private ResourcesDatabase _resourcesDatabase = new();
+    private ResourcesDatabase _resourcesDatabase;
     private WaitForSeconds _scanDelay;
     
     private int _resourceCount;
@@ -44,6 +44,11 @@ public class Base : MonoBehaviour, IDestroyable<Base>
             ReceiveResource();
             _resourcesDatabase.RemoveReservation(resource);
         }
+    }
+
+    public void Initialize(ResourcesDatabase resourcesDatabase)
+    {
+        _resourcesDatabase = resourcesDatabase;
     }
 
     public void PlaceFlag(Flag flag)
@@ -82,6 +87,11 @@ public class Base : MonoBehaviour, IDestroyable<Base>
     public void RemoveUnit(Unit unitToRemove)
     {
         _units.Remove(unitToRemove);
+    }
+
+    public void AddUnit(Unit unit)
+    {
+        _units.Add(unit);
     }
 
     public void SpendResourcesCreatingBase()
