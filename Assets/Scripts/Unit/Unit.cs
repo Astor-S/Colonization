@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class Unit : MonoBehaviour, IDestroyable<Unit>
+public class Unit : MonoBehaviour
 {
     [SerializeField] private Mover _mover;
     [SerializeField] private Picker _picker;
@@ -11,8 +11,6 @@ public class Unit : MonoBehaviour, IDestroyable<Unit>
     private bool _isBusy = false;
 
     public bool IsBusy => _isBusy;
-
-    public event Action<Unit> Destroyed;
 
     public void SendToResource(Resource resource)
     {

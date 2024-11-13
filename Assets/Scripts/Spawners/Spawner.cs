@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Spawner<T> : MonoBehaviour where T : MonoBehaviour, IDestroyable<T>
+public class Spawner<T> : MonoBehaviour where T : MonoBehaviour
 {
     [SerializeField] private T _objectPrefab;
     [SerializeField] private int _poolCapacity;
@@ -19,7 +19,6 @@ public class Spawner<T> : MonoBehaviour where T : MonoBehaviour, IDestroyable<T>
         T @object = _pool.GetObject();
         OnSpawn(@object);
         @object.transform.position = position;
-        @object.Destroyed += OnObjectDestroyed;
         @object.gameObject.SetActive(true);
 
         return @object;
@@ -29,7 +28,6 @@ public class Spawner<T> : MonoBehaviour where T : MonoBehaviour, IDestroyable<T>
 
     protected virtual void OnObjectDestroyed(T obj)
     {
-        obj.Destroyed -= OnObjectDestroyed;
         _pool.Release(obj);
         obj.gameObject.SetActive(false);
     }

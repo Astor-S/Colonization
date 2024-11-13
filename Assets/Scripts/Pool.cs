@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-public class Pool<T> where T : IDestroyable<T>
+public class Pool<T>
 {
     private Stack<T> _objects = new Stack<T>();
 

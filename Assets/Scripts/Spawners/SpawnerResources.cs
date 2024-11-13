@@ -22,6 +22,18 @@ public class SpawnerResources : Spawner<Resource>
         StartCoroutine(SpawnCoroutine());
     }
 
+    protected override void OnSpawn(Resource obj)
+    {
+        base.OnSpawn(obj);
+        obj.Destroyed += OnObjectDestroyed;
+    }
+
+    protected override void OnObjectDestroyed(Resource obj)
+    {
+        base.OnObjectDestroyed(obj);
+        obj.Destroyed -= OnObjectDestroyed;
+    }
+
     private IEnumerator SpawnCoroutine()
     {
         yield return _waitStartDelay;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Base : MonoBehaviour, IDestroyable<Base>
+public class Base : MonoBehaviour
 {
     [SerializeField] private Scanner _scanner;
     [SerializeField] private Flag _flag;
@@ -24,7 +24,6 @@ public class Base : MonoBehaviour, IDestroyable<Base>
     private bool _isNewBaseCreating = false;
 
     public event Action<Base> RequestedCreationBase;
-    public event Action<Base> Destroyed;
 
     public Flag Flag  => _flag;
     public bool EnoughUnitsToCreateBase => _units.Count >= _minCountUnitsForCreateBase;
