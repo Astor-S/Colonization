@@ -10,7 +10,7 @@ public class Base : MonoBehaviour, IDestroyable<Base>
     [SerializeField] private List<Unit> _units;
     [SerializeField] private SpawnerUnits _spawnerUnits;
     [SerializeField] private float _scanDelayTime = 1f;
-    [SerializeField] private int _minCountUnits = 1;
+    [SerializeField] private int _minCountUnitsForCreateBase = 1;
 
     private ResourcesDatabase _resourcesDatabase = new();
     private WaitForSeconds _scanDelay;
@@ -48,7 +48,7 @@ public class Base : MonoBehaviour, IDestroyable<Base>
 
     public void PlaceFlag(Flag flag)
     {
-        if (_units.Count > _minCountUnits)
+        if (_units.Count > _minCountUnitsForCreateBase)
         {
             Flag = flag;
             flag.transform.SetParent(transform);
@@ -151,7 +151,7 @@ public class Base : MonoBehaviour, IDestroyable<Base>
 
     private void RequestCreateBase()
     {
-        if (_units.Count > _minCountUnits && _IsCreateUnit == false && _resourceCount >= _amountResourcesForBaseCreate)     
+        if (_units.Count > _minCountUnitsForCreateBase && _IsCreateUnit == false && _resourceCount >= _amountResourcesForBaseCreate)     
             RequestedCreationBase?.Invoke(this);              
     }
 }

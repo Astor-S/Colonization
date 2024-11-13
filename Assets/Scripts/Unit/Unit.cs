@@ -26,12 +26,12 @@ public class Unit : MonoBehaviour, IDestroyable<Unit>
         _base = @base;
     }
 
-    public void SendToFlag(Flag flag)
+    public void SendToFlag(Flag flag, Action onFlagReached)
     {
         _isBusy = true;
         _mover.MoveTo(flag.transform);
 
-        StartCoroutine(MoveToFlag(flag));
+        StartCoroutine(MoveToFlag(flag, onFlagReached));
     }
 
     public void ChangeOwner(Base newBase)
@@ -39,12 +39,14 @@ public class Unit : MonoBehaviour, IDestroyable<Unit>
         _base = newBase;
     }
 
-    private IEnumerator MoveToFlag(Flag flag)
+    private IEnumerator MoveToFlag(Flag flag, Action onFlagReached)
     {
         yield return new WaitUntil(() =>
             (transform.position - flag.transform.position).sqrMagnitude <= _picker.PickUpDistance);
 
         _isBusy = false;
+
+        onFlagReached?.Invoke();
     }
 
     private IEnumerator CollectResource(Resource resource)
