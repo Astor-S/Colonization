@@ -9,17 +9,13 @@ public class SpawnBasesHandler : MonoBehaviour
     private void OnEnable()
     {         
         foreach (Base @base in _bases)
-        {
             @base.RequestedCreationBase += CreateBase;
-        }
     }
 
     private void OnDisable()
     {
         foreach (Base @base in _bases)
-        {
             @base.RequestedCreationBase -= CreateBase;
-        }
     }
 
     private void CreateBase(Base baseToCreate)

@@ -48,10 +48,13 @@ public class Base : MonoBehaviour, IDestroyable<Base>
 
     public void PlaceFlag(Flag flag)
     {
-        Flag = flag;
-        flag.transform.SetParent(transform);
+        if (_units.Count > _minCountUnits)
+        {
+            Flag = flag;
+            flag.transform.SetParent(transform);
 
-        _IsCreateUnit = false;
+            _IsCreateUnit = false;
+        }
     }
 
     public void MoveFlag(Flag newFlag)

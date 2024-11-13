@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class ClickHandler : MonoBehaviour
 {
+    private const int LeftMouseButton = 0;
+
     [SerializeField] private SpawnerFlags _spawnerFlags;
 
     private Base _selectedBase;
@@ -9,7 +11,7 @@ public class ClickHandler : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(LeftMouseButton))
             HandleMouseClick();
     }
 

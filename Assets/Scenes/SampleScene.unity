@@ -1155,7 +1155,7 @@ MonoBehaviour:
   - {fileID: 1481546027}
   - {fileID: 1462174226}
   _startDelay: 0
-  _repeatRate: 5
+  _repeatRate: 3
 --- !u!1 &1531338419
 GameObject:
   m_ObjectHideFlags: 0
