@@ -7,10 +7,11 @@ using UnityEngine;
 public class Base : MonoBehaviour, IDestroyable<Base>
 {
     [SerializeField] private Scanner _scanner;
+    [SerializeField] private Flag _flag;
     [SerializeField] private List<Unit> _units;
     [SerializeField] private SpawnerUnits _spawnerUnits;
     [SerializeField] private float _scanDelayTime = 1f;
-    [SerializeField] private int _minCountUnitsForCreateBase = 1;
+    [SerializeField] private int _minCountUnitsForCreateBase = 2;
 
     private ResourcesDatabase _resourcesDatabase;
     private WaitForSeconds _scanDelay;
@@ -19,12 +20,14 @@ public class Base : MonoBehaviour, IDestroyable<Base>
     private int _amountResourcesForUnitCreate = 3;
     private int _amountResourcesForBaseCreate = 5;
 
-    private bool _IsCreateUnit = true;
+    private bool _isCreateUnit = true;
+    private bool _isNewBaseCreating = false;
 
     public event Action<Base> RequestedCreationBase;
     public event Action<Base> Destroyed;
 
-    public Flag Flag { get; private set; }
+    public Flag Flag  => _flag;
+    public bool EnoughUnitsToCreateBase => _units.Count >= _minCountUnitsForCreateBase;
 
     private void Awake()
     {
@@ -53,13 +56,18 @@ public class Base : MonoBehaviour, IDestroyable<Base>
 
     public void PlaceFlag(Flag flag)
     {
-        if (_units.Count > _minCountUnitsForCreateBase)
+        if (EnoughUnitsToCreateBase)
         {
-            Flag = flag;
+            _flag = flag;
             flag.transform.SetParent(transform);
 
-            _IsCreateUnit = false;
+            _isCreateUnit = false;
         }
+    }
+
+    public void PrepareCreateBase()
+    {
+            _isCreateUnit = false; 
     }
 
     public void MoveFlag(Flag newFlag)
@@ -67,7 +75,7 @@ public class Base : MonoBehaviour, IDestroyable<Base>
         if (Flag != null)
             Flag.Destroy();
 
-        Flag = newFlag;
+        _flag = newFlag;
         newFlag.transform.SetParent(transform);
     }
 
@@ -101,7 +109,8 @@ public class Base : MonoBehaviour, IDestroyable<Base>
 
     public void ActivateBasicBehavior()
     {
-        _IsCreateUnit = true;
+        _isCreateUnit = true;
+        _isNewBaseCreating = false;
     }
 
     private void ReceiveResource()
@@ -143,7 +152,7 @@ public class Base : MonoBehaviour, IDestroyable<Base>
 
     private void Create()
     {
-        if (_IsCreateUnit == true)
+        if (_isCreateUnit == true)
             CreateUnit();
         else 
             RequestCreateBase();  
@@ -151,7 +160,7 @@ public class Base : MonoBehaviour, IDestroyable<Base>
 
     private void CreateUnit()
     {
-        if (_IsCreateUnit == true && _resourceCount >= _amountResourcesForUnitCreate)
+        if (_isCreateUnit == true && _resourceCount >= _amountResourcesForUnitCreate)
         {
             Unit newUnit = _spawnerUnits.Spawn(transform.position);
             _units.Add(newUnit);
@@ -161,7 +170,10 @@ public class Base : MonoBehaviour, IDestroyable<Base>
 
     private void RequestCreateBase()
     {
-        if (_units.Count > _minCountUnitsForCreateBase && _IsCreateUnit == false && _resourceCount >= _amountResourcesForBaseCreate)     
-            RequestedCreationBase?.Invoke(this);              
+        if (EnoughUnitsToCreateBase && _isNewBaseCreating == false && _resourceCount >= _amountResourcesForBaseCreate)
+        {
+            _isNewBaseCreating = true;
+            RequestedCreationBase?.Invoke(this);
+        }             
     }
 }

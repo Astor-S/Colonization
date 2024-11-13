@@ -7,7 +7,6 @@ public class ClickHandler : MonoBehaviour
     [SerializeField] private SpawnerFlags _spawnerFlags;
 
     private Base _selectedBase;
-    private Vector3 _flagPlacementPosition;
 
     private void Update()
     {
@@ -28,17 +27,62 @@ public class ClickHandler : MonoBehaviour
 
     private void PlaceFlag(Vector3 position)
     {
-        if (_selectedBase != null && _selectedBase.Flag == null)
+        if (_selectedBase != null && _selectedBase.Flag.gameObject.activeInHierarchy == false)
         {
-            _flagPlacementPosition = position;
-            _selectedBase.PlaceFlag(_spawnerFlags.Spawn(_flagPlacementPosition));
-            _selectedBase = null;
+            _selectedBase.PrepareCreateBase();
+            _selectedBase.Flag.transform.position = position;
+            _selectedBase.Flag.gameObject.SetActive(true);
         }
-        else if (_selectedBase != null && _selectedBase.Flag != null)
+        else if (_selectedBase != null && _selectedBase.Flag.gameObject.activeInHierarchy)
         {
-            _flagPlacementPosition = position;
-            _selectedBase.MoveFlag(_spawnerFlags.Spawn(_flagPlacementPosition));
-            _selectedBase = null;
+            _selectedBase.Flag.transform.position = position;
         }
+
+        _selectedBase = null;
     }
 }
+
+//using UnityEngine;
+
+//public class ClickHandler : MonoBehaviour
+//{
+//    private const int LeftMouseButton = 0;
+
+//    [SerializeField] private SpawnerFlags _spawnerFlags;
+
+//    private Base _selectedBase;
+//    private Vector3 _flagPlacementPosition;
+
+//    private void Update()
+//    {
+//        if (Input.GetMouseButtonDown(LeftMouseButton))
+//            HandleMouseClick();
+//    }
+
+//    private void HandleMouseClick()
+//    {
+//        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit))
+//        {
+//            if (hit.collider.TryGetComponent(out Base baseObject))
+//                _selectedBase = baseObject;
+//            else if (_selectedBase != null && hit.collider.TryGetComponent(out Ground _))
+//                PlaceFlag(hit.point);
+//        }
+//    }
+
+//    private void PlaceFlag(Vector3 position)
+//    {
+//        if (_selectedBase != null && _selectedBase.Flag == null)
+//        {
+//            _flagPlacementPosition = position;
+//            _selectedBase.PlaceFlag(_spawnerFlags.Spawn(_flagPlacementPosition));
+//            _selectedBase = null;
+//        }
+//        else if (_selectedBase != null && _selectedBase.Flag != null)
+//        {
+//            _flagPlacementPosition = position;
+//            _selectedBase.MoveFlag(_spawnerFlags.Spawn(_flagPlacementPosition));
+//            _selectedBase = null;
+//        }
+//    }
+//}
