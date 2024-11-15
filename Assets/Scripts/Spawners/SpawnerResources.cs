@@ -40,12 +40,12 @@ public class SpawnerResources : Spawner<Resource>
 
         while (enabled)
         {
-            ChooseRandomSpawnPoint();
+            SpawnAtRandomPoint();
             yield return _waitRepeatRate;
         }
     }
 
-    private void ChooseRandomSpawnPoint()
+    private void SpawnAtRandomPoint()
     {
         int minRange = 0;
         int randomIndex = Random.Range(minRange, _spawnPoints.Length);
