@@ -12,17 +12,11 @@ public class Unit : MonoBehaviour
 
     public bool IsBusy => _isBusy;
 
-    public void SendToResource(Resource resource)
-    {
-        _isBusy = true;
-        _mover.MoveTo(resource.transform);
-        StartCoroutine(CollectResource(resource));
-    }
-
-    public void Init(Base @base)
-    {
+    public void Init(Base @base) => 
         _base = @base;
-    }
+
+    public void ChangeOwner(Base newBase) =>
+    _base = newBase;
 
     public void SendToFlag(Flag flag, Action onFlagReached)
     {
@@ -32,9 +26,11 @@ public class Unit : MonoBehaviour
         StartCoroutine(MoveToFlag(flag, onFlagReached));
     }
 
-    public void ChangeOwner(Base newBase)
+    public void SendToResource(Resource resource)
     {
-        _base = newBase;
+        _isBusy = true;
+        _mover.MoveTo(resource.transform);
+        StartCoroutine(CollectResource(resource));
     }
 
     private IEnumerator MoveToFlag(Flag flag, Action onFlagReached)

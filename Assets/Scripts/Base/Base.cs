@@ -48,41 +48,23 @@ public class Base : MonoBehaviour
         }
     }
 
-    public void Initialize(ResourcesDatabase resourcesDatabase)
-    {
+    public void Initialize(ResourcesDatabase resourcesDatabase) => 
         _resourcesDatabase = resourcesDatabase;
-    }
 
     public void PrepareCreateBase() => 
         _isCreateUnit = false;
 
-    public Unit GetFreeUnit()
-    {
-        foreach (Unit unit in _units)
-        {
-            if (unit.IsBusy == false)
-            {
-                return unit;
-            }
-        }
+    public Unit GetFreeUnit() => 
+        _units.FirstOrDefault(unit => unit.IsBusy == false);
 
-        return null;
-    }
-
-    public void RemoveUnit(Unit unitToRemove)
-    {
+    public void RemoveUnit(Unit unitToRemove) => 
         _units.Remove(unitToRemove);
-    }
 
-    public void AddUnit(Unit unit)
-    {
+    public void AddUnit(Unit unit) => 
         _units.Add(unit);
-    }
 
-    public void SpendResourcesCreatingBase()
-    {
+    public void SpendResourcesCreatingBase() => 
         _resourceCount -= _amountResourcesForBaseCreate;
-    }
 
     public void ActivateBasicBehavior()
     {
