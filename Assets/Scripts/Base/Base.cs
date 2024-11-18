@@ -24,9 +24,11 @@ public class Base : MonoBehaviour
     private bool _isNewBaseCreating = false;
 
     public event Action<Base> RequestedCreationBase;
+    public event Action<Unit> SendUnitToCreateBase;
 
     public Flag Flag  => _flag;
     public bool EnoughUnitsToCreateBase => _units.Count >= _minCountUnitsForCreateBase;
+    public int ResourceCount => _resourceCount;
 
     private void Awake()
     {
@@ -35,7 +37,7 @@ public class Base : MonoBehaviour
 
     private void OnEnable()
     {
-        StartCoroutine(MineResources());
+        StartCoroutine(Working());
     }
 
     private void OnTriggerEnter(Collider collision)
@@ -51,19 +53,16 @@ public class Base : MonoBehaviour
     public void Initialize(ResourcesDatabase resourcesDatabase) => 
         _resourcesDatabase = resourcesDatabase;
 
-    public void PrepareCreateBase() => 
+    public void PrepareCreateBase()
+    {
         _isCreateUnit = false;
+        _isNewBaseCreating = true;
+    }
 
-    public Unit GetFreeUnit() => 
-        _units.FirstOrDefault(unit => unit.IsBusy == false);
+    public void AddUnit(Unit unit) =>
+       _units.Add(unit);
 
-    public void RemoveUnit(Unit unitToRemove) => 
-        _units.Remove(unitToRemove);
-
-    public void AddUnit(Unit unit) => 
-        _units.Add(unit);
-
-    public void SpendResourcesCreatingBase() => 
+    public void SpendResourcesCreatingBase() =>
         _resourceCount -= _amountResourcesForBaseCreate;
 
     public void ActivateBasicBehavior()
@@ -72,41 +71,60 @@ public class Base : MonoBehaviour
         _isNewBaseCreating = false;
     }
 
+    private void RemoveUnit(Unit unitToRemove) => 
+        _units.Remove(unitToRemove);
+
     private void ReceiveResource()
     {
         _resourceCount++;
         Create();
     }
 
-    private IEnumerator MineResources()
+    private IEnumerator Working()
     {
         while(enabled)
         {
             yield return _scanDelay;
 
-            SendUnitsForResources();
+            SendUnit();
         }
     }
 
-    private void SendUnitsForResources()
+    private Unit GetFreeUnit() =>
+       _units.FirstOrDefault(unit => unit.IsBusy == false);
+
+    private void SendUnit()
     {
-        List<Unit> freeUnits = _units.Where(unit => unit.IsBusy == false).ToList();
+        Unit freeUnit = GetFreeUnit();
 
-        List<Resource> freeResources = _resourcesDatabase.GetFreeResources(_scanner.Scan()).ToList();
-
-        if (freeUnits.Count > 0 && freeResources.Count > 0)
+        if (freeUnit != null)
         {
-            foreach (Unit unit in freeUnits)
+            if(_units.Count >= _minCountUnitsForCreateBase && _resourceCount >= _amountResourcesForBaseCreate)
+                SendUnitToDestination(freeUnit, () => SendUnitToCreateBase?.Invoke(freeUnit));
+            else
+                SendUnitsForResources(freeUnit);
+        }
+    }
+
+    private void SendUnitsForResources(Unit unit) 
+    {
+            List<Resource> freeResources = _resourcesDatabase.GetFreeResources(_scanner.Scan()).ToList();
+
+            if (freeResources.Count > 0)
             {
                 Resource resource = freeResources[0];
                 _resourcesDatabase.ReserveResources(resource);
                 unit.SendToResource(resource);
-                freeResources.RemoveAt(0); 
-                
-                if (freeResources.Count == 0)
-                    break; 
-            }
-        }
+            }    
+    }
+
+    private void SendUnitToDestination(Unit freeUnit, Action callback)
+    {
+        freeUnit.MoveToFlag(_flag, () =>
+        {
+            RemoveUnit(freeUnit);
+            callback?.Invoke();
+        });
     }
 
     private void Create()

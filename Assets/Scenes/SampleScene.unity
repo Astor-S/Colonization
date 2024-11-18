@@ -183,9 +183,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8832799747b7f0e45bcfef8c61fcefb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _startBase: {fileID: 2999236845305050910}
   _spawnerBases: {fileID: 1562202819}
-  _bases:
-  - {fileID: 2999236845305050910}
 --- !u!4 &178799017
 Transform:
   m_ObjectHideFlags: 0
@@ -1089,8 +1088,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _objectPrefab: {fileID: 646698459750038137, guid: e3cc0ae23f1ba41479b5521f3bb7fab7, type: 3}
-  _poolCapacity: 20
-  _poolMaxSize: 20
   _spawnPoints:
   - {fileID: 400330950}
   - {fileID: 1531338420}
@@ -1170,8 +1167,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _objectPrefab: {fileID: -1142219894836185457, guid: b65ebefeb57e9b84f9c81a59e39f49e9, type: 3}
-  _poolCapacity: 10
-  _poolMaxSize: 10
 --- !u!4 &1562202820
 Transform:
   m_ObjectHideFlags: 0

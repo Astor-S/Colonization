@@ -12,18 +12,23 @@ public class Unit : MonoBehaviour
 
     public bool IsBusy => _isBusy;
 
+    public event Action<Unit> Reached;
+
     public void Init(Base @base) => 
         _base = @base;
 
     public void ChangeOwner(Base newBase) =>
-    _base = newBase;
+        _base = newBase;
 
-    public void SendToFlag(Flag flag, Action onFlagReached)
+    public void MoveToFlag(Flag flag, Action onFlagReached)
     {
         _isBusy = true;
         _mover.MoveTo(flag.transform);
 
-        StartCoroutine(MoveToFlag(flag, onFlagReached));
+        StartCoroutine(MovingToFlag(flag, onFlagReached));
+
+        _base.SpendResourcesCreatingBase();
+        _base.ActivateBasicBehavior();
     }
 
     public void SendToResource(Resource resource)
@@ -33,7 +38,7 @@ public class Unit : MonoBehaviour
         StartCoroutine(CollectResource(resource));
     }
 
-    private IEnumerator MoveToFlag(Flag flag, Action onFlagReached)
+    private IEnumerator MovingToFlag(Flag flag, Action onFlagReached)
     {
         yield return new WaitUntil(() =>
             (transform.position - flag.transform.position).sqrMagnitude <= _picker.PickUpDistance);
@@ -41,6 +46,8 @@ public class Unit : MonoBehaviour
         _isBusy = false;
 
         onFlagReached?.Invoke();
+        Reached?.Invoke(this);
+        flag.gameObject.SetActive(false);
     }
 
     private IEnumerator CollectResource(Resource resource)
