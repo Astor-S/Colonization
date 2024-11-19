@@ -4,12 +4,13 @@ public class BaseService : MonoBehaviour
 {
     [SerializeField] private Base _startBase;
     [SerializeField] private SpawnerBases _spawnerBases;
+    [SerializeField] private SpawnerUnits _spawnerUnits;
 
     private ResourcesDatabase _resourcesDatabase = new();
 
     private void Start()
     { 
-        _startBase.Initialize(_resourcesDatabase);
+        _startBase.Initialize(_resourcesDatabase, _spawnerUnits);
     }
 
     private void OnEnable()
@@ -32,7 +33,7 @@ public class BaseService : MonoBehaviour
         unit.Reached -= OnReached;
         Base @base = _spawnerBases.Spawn(unit.transform.position);
         @base.SendUnitToCreateBase += OnSendUnitToCreateBase;
-        @base.Initialize(_resourcesDatabase);
+        @base.Initialize(_resourcesDatabase, _spawnerUnits);
         @base.AddUnit(unit);
         unit.ChangeOwner(@base);
     }

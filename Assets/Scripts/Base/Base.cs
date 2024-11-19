@@ -9,10 +9,10 @@ public class Base : MonoBehaviour
     [SerializeField] private Scanner _scanner;
     [SerializeField] private Flag _flag;
     [SerializeField] private List<Unit> _units;
-    [SerializeField] private SpawnerUnits _spawnerUnits;
     [SerializeField] private float _scanDelayTime = 1f;
     [SerializeField] private int _minCountUnitsForCreateBase = 2;
 
+    private SpawnerUnits _spawnerUnits;
     private ResourcesDatabase _resourcesDatabase;
     private WaitForSeconds _scanDelay;
     
@@ -25,6 +25,7 @@ public class Base : MonoBehaviour
 
     public event Action<Base> RequestedCreationBase;
     public event Action<Unit> SendUnitToCreateBase;
+    public event Action ResourceCountChanged;
 
     public Flag Flag  => _flag;
     public bool EnoughUnitsToCreateBase => _units.Count >= _minCountUnitsForCreateBase;
@@ -50,8 +51,11 @@ public class Base : MonoBehaviour
         }
     }
 
-    public void Initialize(ResourcesDatabase resourcesDatabase) => 
+    public void Initialize(ResourcesDatabase resourcesDatabase, SpawnerUnits spawnerUnits)
+    {
         _resourcesDatabase = resourcesDatabase;
+        _spawnerUnits = spawnerUnits;
+    }
 
     public void PrepareCreateBase()
     {
@@ -62,8 +66,11 @@ public class Base : MonoBehaviour
     public void AddUnit(Unit unit) =>
        _units.Add(unit);
 
-    public void SpendResourcesCreatingBase() =>
+    public void SpendResourcesCreatingBase()
+    {
         _resourceCount -= _amountResourcesForBaseCreate;
+        ResourceCountChanged?.Invoke(); 
+    }
 
     public void ActivateBasicBehavior()
     {
@@ -78,6 +85,7 @@ public class Base : MonoBehaviour
     {
         _resourceCount++;
         Create();
+        ResourceCountChanged?.Invoke();
     }
 
     private IEnumerator Working()
@@ -142,6 +150,7 @@ public class Base : MonoBehaviour
             Unit newUnit = _spawnerUnits.Spawn(transform.position);
             _units.Add(newUnit);
             _resourceCount -= _amountResourcesForUnitCreate;
+            ResourceCountChanged?.Invoke();
         }
     }
 
