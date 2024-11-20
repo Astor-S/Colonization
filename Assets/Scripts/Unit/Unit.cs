@@ -7,12 +7,13 @@ public class Unit : MonoBehaviour
     [SerializeField] private Mover _mover;
     [SerializeField] private Picker _picker;
     [SerializeField] private Base _base;
-    
+
     private bool _isBusy = false;
 
     public bool IsBusy => _isBusy;
 
     public event Action<Unit> Reached;
+    public event Action<Resource, Unit> ResourceDelivered;
 
     public void Init(Base @base) => 
         _base = @base;
@@ -31,11 +32,11 @@ public class Unit : MonoBehaviour
         _base.ActivateBasicBehavior();
     }
 
-    public void SendToResource(Resource resource)
+    public void SendToResource(Resource resource, Unit unit)
     {
         _isBusy = true;
         _mover.MoveTo(resource.transform);
-        StartCoroutine(CollectResource(resource));
+        StartCoroutine(CollectResource(resource, unit));
     }
 
     private IEnumerator MovingToFlag(Flag flag, Action onFlagReached)
@@ -50,7 +51,7 @@ public class Unit : MonoBehaviour
         flag.gameObject.SetActive(false);
     }
 
-    private IEnumerator CollectResource(Resource resource)
+    private IEnumerator CollectResource(Resource resource, Unit unit)
     {
         yield return new WaitUntil(() =>
             (transform.position - resource.transform.position).sqrMagnitude <= _picker.PickUpDistance);
@@ -61,6 +62,7 @@ public class Unit : MonoBehaviour
         yield return new WaitUntil(() =>
             (transform.position - _base.transform.position).sqrMagnitude <= _picker.PickUpDistance);
 
+        ResourceDelivered?.Invoke(resource, unit);
         _picker.Release();
         _isBusy = false; 
     }

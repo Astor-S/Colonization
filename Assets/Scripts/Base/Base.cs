@@ -42,14 +42,12 @@ public class Base : MonoBehaviour
         StartCoroutine(Working());
     }
 
-    private void OnTriggerEnter(Collider collision)
+    private void OnResourceDelivered(Resource resource, Unit unit)
     {
-        if (collision.TryGetComponent(out Resource resource))
-        {
-            resource.Destroy();
-            ReceiveResource();
-            _resourcesDatabase.RemoveReservation(resource);
-        }
+        resource.Destroy();
+        ReceiveResource();
+        _resourcesDatabase.RemoveReservation(resource);
+        unit.ResourceDelivered -= OnResourceDelivered;
     }
 
     public void Initialize(ResourcesDatabase resourcesDatabase, SpawnerUnits spawnerUnits)
@@ -122,8 +120,9 @@ public class Base : MonoBehaviour
         {
             Resource resource = _availableResources[0];
             _resourcesDatabase.ReserveResources(resource);
-            unit.SendToResource(resource);
+            unit.SendToResource(resource, unit);
             _availableResources.RemoveAt(0);
+            unit.ResourceDelivered += OnResourceDelivered;
         }
     }
 
