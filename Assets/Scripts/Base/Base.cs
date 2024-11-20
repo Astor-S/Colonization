@@ -15,7 +15,8 @@ public class Base : MonoBehaviour
     private SpawnerUnits _spawnerUnits;
     private ResourcesDatabase _resourcesDatabase;
     private WaitForSeconds _scanDelay;
-    
+    private List<Resource> _availableResources = new();
+
     private int _resourceCount;
     private int _amountResourcesForUnitCreate = 3;
     private int _amountResourcesForBaseCreate = 5;
@@ -94,6 +95,7 @@ public class Base : MonoBehaviour
         {
             yield return _scanDelay;
 
+            _availableResources = _resourcesDatabase.GetFreeResources(_scanner.Scan()).ToList();
             SendUnit();
         }
     }
@@ -116,14 +118,13 @@ public class Base : MonoBehaviour
 
     private void SendUnitsForResources(Unit unit) 
     {
-            List<Resource> freeResources = _resourcesDatabase.GetFreeResources(_scanner.Scan()).ToList();
-
-            if (freeResources.Count > 0)
-            {
-                Resource resource = freeResources[0];
-                _resourcesDatabase.ReserveResources(resource);
-                unit.SendToResource(resource);
-            }    
+        if (_availableResources.Count > 0)
+        {
+            Resource resource = _availableResources[0];
+            _resourcesDatabase.ReserveResources(resource);
+            unit.SendToResource(resource);
+            _availableResources.RemoveAt(0);
+        }
     }
 
     private void SendUnitToDestination(Unit freeUnit, Action callback)

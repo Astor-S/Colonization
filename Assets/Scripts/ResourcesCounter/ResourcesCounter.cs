@@ -6,10 +6,15 @@ public class ResourcesCounter : MonoBehaviour
     [SerializeField] private Base _base;
     [SerializeField] private TextMeshProUGUI _resourcesCountText;
 
-    private void Start()
+    private void OnEnable()
     {
         _base.ResourceCountChanged += UpdateResourceCount;
-        UpdateResourceCount(); 
+        UpdateResourceCount();
+    }
+
+    private void OnDisable()
+    {
+        _base.ResourceCountChanged -= UpdateResourceCount;
     }
 
     private void UpdateResourceCount()

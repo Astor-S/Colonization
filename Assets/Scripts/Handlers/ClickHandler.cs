@@ -2,19 +2,25 @@ using UnityEngine;
 
 public class ClickHandler : MonoBehaviour
 {
-    private const int LeftMouseButton = 0;
+    private const int SelectButton = 0;
 
     private Base _selectedBase;
+    private Camera _mainCamera;
+
+    private void Awake()
+    {
+        _mainCamera = Camera.main;
+    }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(LeftMouseButton))
+        if (Input.GetMouseButtonDown(SelectButton))
             HandleMouseClick();
     }
 
     private void HandleMouseClick()
     {
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit))
+        if (Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit))
         {
             if (hit.collider.TryGetComponent(out Base baseObject))
                 _selectedBase = baseObject;
